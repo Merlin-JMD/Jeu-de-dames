@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <title>Jeu de Dames</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <h1>Jeu de Dames</h1>
+        <p class="subtitle">Dames internationales &mdash; 10&times;10</p>
+      </header>
+
+      <main class="app-main">
+        <section class="board-panel">
+          <div id="board" class="board" role="grid" aria-label="Plateau de dames"></div>
+          <p id="message" class="message"></p>
+        </section>
+
+        <aside class="side-panel">
+          <div id="setup-panel" class="panel">
+            <h2>Nouvelle partie</h2>
+            <label for="difficulty">Niveau de difficulté</label>
+            <select id="difficulty">
+              <option value="1">1 &mdash; Débutant</option>
+              <option value="2" selected>2 &mdash; Facile</option>
+              <option value="3">3 &mdash; Intermédiaire</option>
+              <option value="4">4 &mdash; Expert</option>
+            </select>
+            <button id="new-game-btn" class="btn btn--primary">Jouer contre l'ordinateur</button>
+          </div>
+
+          <div id="status-panel" class="panel">
+            <h2>Partie en cours</h2>
+            <p id="turn-indicator">&mdash;</p>
+            <p id="score-indicator">&mdash;</p>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
