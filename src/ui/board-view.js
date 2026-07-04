@@ -1,5 +1,11 @@
 import { SIZE, isDarkSquare } from '../engine/board.js';
 
+// The human always plays White, and White moves first, so White's rows
+// (0-3) are drawn at the bottom of the screen, nearest the player.
+function toEngineRow(visualRow) {
+  return SIZE - 1 - visualRow;
+}
+
 export function renderBoard(boardEl, state, uiState = {}) {
   const { selected = null, destinations = [], lastMove = null, interactive = true } = uiState;
   boardEl.innerHTML = '';
@@ -10,7 +16,8 @@ export function renderBoard(boardEl, state, uiState = {}) {
     lastMove ? lastMove.path.map((p) => `${p.row},${p.col}`) : []
   );
 
-  for (let row = 0; row < SIZE; row++) {
+  for (let visualRow = 0; visualRow < SIZE; visualRow++) {
+    const row = toEngineRow(visualRow);
     for (let col = 0; col < SIZE; col++) {
       const square = document.createElement('div');
       const dark = isDarkSquare(row, col);
@@ -50,7 +57,7 @@ export function squareFromPoint(boardEl, clientX, clientY) {
   const cellWidth = rect.width / SIZE;
   const cellHeight = rect.height / SIZE;
   const col = Math.floor((clientX - rect.left) / cellWidth);
-  const row = Math.floor((clientY - rect.top) / cellHeight);
-  if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return null;
-  return { row, col };
+  const visualRow = Math.floor((clientY - rect.top) / cellHeight);
+  if (visualRow < 0 || visualRow >= SIZE || col < 0 || col >= SIZE) return null;
+  return { row: toEngineRow(visualRow), col };
 }

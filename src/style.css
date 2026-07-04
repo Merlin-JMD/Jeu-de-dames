@@ -14,8 +14,8 @@
 
   --piece-white: #f4ecd8;
   --piece-white-shadow: #b9ac8e;
-  --piece-black: #2a2320;
-  --piece-black-shadow: #0f0c0a;
+  --piece-black: #5a4c42;
+  --piece-black-shadow: #120f0c;
 }
 
 * {
@@ -141,12 +141,12 @@ body {
 
 .piece--white {
   background: radial-gradient(circle at 35% 30%, var(--piece-white), var(--piece-white-shadow));
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(0, 0, 0, 0.45);
 }
 
 .piece--black {
   background: radial-gradient(circle at 35% 30%, var(--piece-black), var(--piece-black-shadow));
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(234, 217, 184, 0.35), 0 0 0 2px rgba(234, 217, 184, 0.55);
 }
 
 .piece--king::after {
