@@ -61,7 +61,7 @@ function scheduleAiMove() {
     }
     aiThinking = false;
     refreshUI();
-  }, 50);
+  }, 1000);
 }
 
 function startNewGame(level) {

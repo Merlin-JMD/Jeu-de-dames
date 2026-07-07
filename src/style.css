@@ -10,7 +10,7 @@
   --text-light: #f2e9d8;
 
   --square-dark: #3d2a1c;
-  --square-light: #caa876;
+  --square-light: #f0e3cd;
 
   --piece-white: #f4ecd8;
   --piece-white-shadow: #b9ac8e;
@@ -253,4 +253,41 @@ body {
   .side-panel {
     width: min(90vw, 560px);
   }
+}
+
+
+/* === Pieces 3D (images PNG) === */
+.piece--white,
+.piece--black {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+}
+
+.piece--white { background-image: url('./assets/pieces/pawn-light.png'); }
+.piece--black { background-image: url('./assets/pieces/pawn-dark.png'); }
+
+.piece--white.piece--king { background-image: url('./assets/pieces/queen-light.png'); }
+.piece--black.piece--king { background-image: url('./assets/pieces/queen-dark.png'); }
+
+.piece--king::after { content: none; }
+
+/* === Ajustements contraste et visibilite === */
+/* Cases foncees eclaircies pour mieux detacher les pieces brunes */
+.square--dark {
+  background: #7d6450;
+}
+
+/* Pieces brunes eclaircies pour reveler les rainures gravees */
+.piece--black {
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+}
+
+/* Pieces claires: leger renfort de contraste */
+.piece--white {
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
 }
