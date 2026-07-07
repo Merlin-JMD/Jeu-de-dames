@@ -12,7 +12,7 @@ function squareEq(a, b) {
  * instead of separate mouse/touch listeners, is what keeps multi-square king
  * drags reliable on touch devices.
  */
-export function createBoardController(boardEl, { onMove }) {
+export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
   let state = null;
   let legalMoves = [];
   let interactive = false;
@@ -77,6 +77,20 @@ export function createBoardController(boardEl, { onMove }) {
     ghostEl.style.top = `${clientY - size / 2}px`;
   }
 
+  function handleBlockedClick(square) {
+    clearSelection();
+    render();
+    const pieceHere = state.grid[square.row][square.col];
+    const mustCapture = legalMoves.length > 0 && legalMoves[0].isCapture;
+    if (pieceHere && pieceHere.color === state.turn && mustCapture) {
+      if (onBlockedPiece) onBlockedPiece();
+      for (const m of legalMoves) {
+        const el = boardEl.querySelector(`.piece[data-row="${m.from.row}"][data-col="${m.from.col}"]`);
+        if (el) el.classList.add('piece--must-capture');
+      }
+    }
+  }
+
   function handlePointerDown(e) {
     if (!interactive) return;
     const squareEl = e.target.closest('.square');
@@ -103,8 +117,7 @@ export function createBoardController(boardEl, { onMove }) {
       boardEl.setPointerCapture(e.pointerId);
       render();
     } else {
-      clearSelection();
-      render();
+      handleBlockedClick(square);
     }
   }
 

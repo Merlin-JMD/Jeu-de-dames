@@ -9,7 +9,7 @@ const HUMAN_COLOR = WHITE;
 const AI_COLOR = BLACK;
 
 const boardEl = document.getElementById('board');
-const controller = createBoardController(boardEl, { onMove: handleHumanMove });
+const controller = createBoardController(boardEl, { onMove: handleHumanMove, onBlockedPiece: handleBlockedPiece });
 const controls = setupControls({ onNewGame: startNewGame });
 
 let state = createInitialState();
@@ -40,6 +40,9 @@ function refreshUI() {
   }
 }
 
+function handleBlockedPiece() {
+  controls.setMessage('Prise obligatoire ! Ce pion ne peut pas jouer : capturez avec un pion illumin\u00E9.');
+}
 function handleHumanMove(move) {
   state = applyMove(state, move);
   lastMove = move;

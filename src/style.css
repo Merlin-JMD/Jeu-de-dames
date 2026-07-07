@@ -291,3 +291,14 @@ body {
 .piece--white {
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
 }
+
+/* === Aide debutant : prise obligatoire === */
+@keyframes pulse-capture {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.95), 0 0 16px 6px rgba(212, 175, 55, 0.55); }
+  50% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.45), 0 0 24px 12px rgba(212, 175, 55, 0.2); }
+}
+
+.piece--must-capture {
+  border-radius: 50%;
+  animation: pulse-capture 0.9s ease-in-out infinite;
+}
