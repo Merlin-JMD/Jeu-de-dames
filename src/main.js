@@ -4,6 +4,7 @@ import { applyMove, isGameOver } from './engine/rules.js';
 import { chooseAiMove } from './engine/ai.js';
 import { createBoardController } from './ui/drag-drop.js';
 import { setupControls } from './ui/controls.js';
+import { renderCoordinates } from './ui/board-view.js';
 
 const HUMAN_COLOR = WHITE;
 const AI_COLOR = BLACK;
@@ -75,4 +76,5 @@ function startNewGame(level) {
   refreshUI();
 }
 
+renderCoordinates();
 startNewGame(aiLevel);

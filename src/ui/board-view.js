@@ -61,3 +61,45 @@ export function squareFromPoint(boardEl, clientX, clientY) {
   if (visualRow < 0 || visualRow >= SIZE || col < 0 || col >= SIZE) return null;
   return { row: toEngineRow(visualRow), col };
 }
+
+
+const COLUMN_LETTERS = 'abcdefghij';
+
+export function renderCoordinates() {
+  const topEl = document.getElementById('col-labels-top');
+  const bottomEl = document.getElementById('col-labels-bottom');
+  const leftEl = document.getElementById('row-labels-left');
+  const rightEl = document.getElementById('row-labels-right');
+  if (!topEl || !bottomEl || !leftEl || !rightEl) return;
+
+  topEl.innerHTML = '';
+  bottomEl.innerHTML = '';
+  for (let col = 0; col < SIZE; col++) {
+    const letter = COLUMN_LETTERS[col];
+    const spanTop = document.createElement('span');
+    spanTop.className = 'coord-label';
+    spanTop.textContent = letter;
+    topEl.appendChild(spanTop);
+
+    const spanBottom = document.createElement('span');
+    spanBottom.className = 'coord-label';
+    spanBottom.textContent = letter;
+    bottomEl.appendChild(spanBottom);
+  }
+
+  leftEl.innerHTML = '';
+  rightEl.innerHTML = '';
+  for (let visualRow = 0; visualRow < SIZE; visualRow++) {
+    const row = toEngineRow(visualRow);
+    const number = String(row + 1);
+    const spanLeft = document.createElement('span');
+    spanLeft.className = 'coord-label';
+    spanLeft.textContent = number;
+    leftEl.appendChild(spanLeft);
+
+    const spanRight = document.createElement('span');
+    spanRight.className = 'coord-label';
+    spanRight.textContent = number;
+    rightEl.appendChild(spanRight);
+  }
+}

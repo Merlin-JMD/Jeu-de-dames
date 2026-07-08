@@ -302,3 +302,47 @@ body {
   border-radius: 50%;
   animation: pulse-capture 0.9s ease-in-out infinite;
 }
+
+/* === Coordonnees du damier (lettres a-j, chiffres 1-10) === */
+.board-wrapper {
+  display: grid;
+  grid-template-columns: 1.4rem 1fr 1.4rem;
+  grid-template-rows: 1.4rem 1fr 1.4rem;
+  grid-template-areas:
+    ". top ."
+    "left board right"
+    ". bottom .";
+  width: min(90vw, 560px);
+}
+
+.board-wrapper .board {
+  grid-area: board;
+  width: 100%;
+}
+
+.coord-row {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+
+.coord-row--top { grid-area: top; }
+.coord-row--bottom { grid-area: bottom; }
+
+.coord-col {
+  display: grid;
+  grid-template-rows: repeat(10, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+
+.coord-col--left { grid-area: left; }
+.coord-col--right { grid-area: right; }
+
+.coord-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold);
+  opacity: 0.85;
+}
