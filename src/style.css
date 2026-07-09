@@ -346,3 +346,19 @@ body {
   color: var(--gold);
   opacity: 0.85;
 }
+
+/* === Animation des prises multiples === */
+.square--capture-path::after {
+  content: '';
+  position: absolute;
+  width: 22%;
+  height: 22%;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.6);
+  pointer-events: none;
+}
+
+.piece--capturing {
+  border-radius: 50%;
+  animation: pulse-capture 0.9s ease-in-out infinite;
+}

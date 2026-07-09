@@ -5,6 +5,7 @@ import { chooseAiMove } from './engine/ai.js';
 import { createBoardController } from './ui/drag-drop.js';
 import { setupControls } from './ui/controls.js';
 import { renderCoordinates } from './ui/board-view.js';
+import { playCaptureAnimation } from './ui/capture-animation.js';
 
 const HUMAN_COLOR = WHITE;
 const AI_COLOR = BLACK;
@@ -44,7 +45,10 @@ function refreshUI() {
 function handleBlockedPiece() {
   controls.setMessage('Prise obligatoire ! Ce pion ne peut pas jouer : capturez avec un pion illumin\u00E9.');
 }
-function handleHumanMove(move) {
+async function handleHumanMove(move) {
+  if (move.isCapture && move.captures.length > 1) {
+    await playCaptureAnimation(boardEl, state.grid, move);
+  }
   state = applyMove(state, move);
   lastMove = move;
   refreshUI();
@@ -57,9 +61,12 @@ function handleHumanMove(move) {
 function scheduleAiMove() {
   aiThinking = true;
   refreshUI();
-  setTimeout(() => {
+  setTimeout(async () => {
     const move = chooseAiMove(state, aiLevel);
     if (move) {
+      if (move.isCapture && move.captures.length > 1) {
+        await playCaptureAnimation(boardEl, state.grid, move);
+      }
       state = applyMove(state, move);
       lastMove = move;
     }

@@ -7,13 +7,16 @@ function toEngineRow(visualRow) {
 }
 
 export function renderBoard(boardEl, state, uiState = {}) {
-  const { selected = null, destinations = [], lastMove = null, interactive = true } = uiState;
+  const { selected = null, destinations = [], lastMove = null, interactive = true, capturePath = null, animatingSquare = null } = uiState;
   boardEl.innerHTML = '';
   boardEl.classList.toggle('board--locked', !interactive);
 
   const destinationKeys = new Set(destinations.map((d) => `${d.row},${d.col}`));
   const lastMoveKeys = new Set(
     lastMove ? lastMove.path.map((p) => `${p.row},${p.col}`) : []
+  );
+  const capturePathKeys = new Set(
+    capturePath ? capturePath.map((p) => `${p.row},${p.col}`) : []
   );
 
   for (let visualRow = 0; visualRow < SIZE; visualRow++) {
@@ -34,6 +37,9 @@ export function renderBoard(boardEl, state, uiState = {}) {
       if (lastMoveKeys.has(`${row},${col}`)) {
         square.classList.add('square--last-move');
       }
+      if (capturePathKeys.has(`${row},${col}`)) {
+        square.classList.add('square--capture-path');
+      }
 
       const piece = state.grid[row][col];
       if (piece) {
@@ -41,6 +47,9 @@ export function renderBoard(boardEl, state, uiState = {}) {
         pieceEl.className = `piece piece--${piece.color === 'W' ? 'white' : 'black'}${
           piece.king ? ' piece--king' : ''
         }`;
+        if (animatingSquare && animatingSquare.row === row && animatingSquare.col === col) {
+          pieceEl.classList.add('piece--capturing');
+        }
         pieceEl.dataset.row = String(row);
         pieceEl.dataset.col = String(col);
         square.appendChild(pieceEl);
@@ -61,7 +70,6 @@ export function squareFromPoint(boardEl, clientX, clientY) {
   if (visualRow < 0 || visualRow >= SIZE || col < 0 || col >= SIZE) return null;
   return { row: toEngineRow(visualRow), col };
 }
-
 
 const COLUMN_LETTERS = 'abcdefghij';
 
