@@ -7,6 +7,7 @@ import { setupControls } from './ui/controls.js';
 import { renderCoordinates } from './ui/board-view.js';
 import { playCaptureAnimation } from './ui/capture-animation.js';
 import { setupBoardResize } from './ui/board-resize.js';
+import { playMoveSound } from './ui/sound.js';
 
 const HUMAN_COLOR = WHITE;
 const AI_COLOR = BLACK;
@@ -50,6 +51,7 @@ async function handleHumanMove(move) {
   if (move.isCapture && move.captures.length > 1) {
     await playCaptureAnimation(boardEl, state.grid, move);
   }
+  playMoveSound();
   state = applyMove(state, move);
   lastMove = move;
   refreshUI();
@@ -66,6 +68,7 @@ function scheduleAiMove() {
     const move = chooseAiMove(state, aiLevel);
     if (move) {
       await playCaptureAnimation(boardEl, state.grid, move);
+      playMoveSound();
       state = applyMove(state, move);
       lastMove = move;
     }

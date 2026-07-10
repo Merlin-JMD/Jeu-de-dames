@@ -1,3 +1,5 @@
+import { isSoundEnabled, toggleSound } from './sound.js';
+
 export function setupControls({ onNewGame }) {
   const difficultySelect = document.getElementById('difficulty');
   const newGameBtn = document.getElementById('new-game-btn');
@@ -5,7 +7,8 @@ export function setupControls({ onNewGame }) {
   const scoreIndicator = document.getElementById('score-indicator');
   const messageEl = document.getElementById('message');
   const fullscreenBtn = document.getElementById('fullscreen-btn');
-  const boardPanel = document.querySelector('.app-main');
+  const boardPanel = document.getElementById('scale-wrapper');
+  const soundBtn = document.getElementById('sound-btn');
 
   newGameBtn.addEventListener('click', () => {
     onNewGame(Number(difficultySelect.value));
@@ -23,6 +26,12 @@ export function setupControls({ onNewGame }) {
     fullscreenBtn.textContent = document.fullscreenElement
       ? 'Retour affichage normal'
       : 'Plein ecran';
+  });
+
+  soundBtn.textContent = isSoundEnabled() ? 'Son : On' : 'Son : Off';
+  soundBtn.addEventListener('click', () => {
+    const nowEnabled = toggleSound();
+    soundBtn.textContent = nowEnabled ? 'Son : On' : 'Son : Off';
   });
 
   return {

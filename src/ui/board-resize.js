@@ -7,8 +7,20 @@ function currentCellSize() {
   return Number.isFinite(parsed) ? parsed : 56;
 }
 
+// Estimates the largest cell size (in px) that still lets the whole board,
+// its coordinate labels, and the controls row fit inside the current
+// window without overflowing horizontally or vertically.
+function maxCellForViewport() {
+  const horizontalOverhead = 120; // side padding + coordinate columns + board border
+  const verticalOverhead = 260; // header + controls row + padding + board border
+  const maxByWidth = (window.innerWidth - horizontalOverhead) / 10;
+  const maxByHeight = (window.innerHeight - verticalOverhead) / 10;
+  return Math.max(MIN_CELL, Math.min(MAX_CELL, maxByWidth, maxByHeight));
+}
+
 // The handle sits in the bottom-left corner of the board. Dragging it left
-// or down grows the board; dragging it right or up shrinks it.
+// or down grows the board; dragging it right or up shrinks it. Growth is
+// capped both by MAX_CELL and by whatever actually fits in the window.
 export function setupBoardResize(handleEl) {
   if (!handleEl) return;
 
@@ -32,7 +44,8 @@ export function setupBoardResize(handleEl) {
     const dy = e.clientY - startY;
     const delta = (dx + dy) / 2;
     let newSize = startSize + delta / 10;
-    newSize = Math.min(MAX_CELL, Math.max(MIN_CELL, newSize));
+    const dynamicMax = maxCellForViewport();
+    newSize = Math.min(dynamicMax, Math.max(MIN_CELL, newSize));
     document.documentElement.style.setProperty('--cell-size', `${newSize}px`);
   }
 
