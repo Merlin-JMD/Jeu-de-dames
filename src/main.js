@@ -6,6 +6,7 @@ import { createBoardController } from './ui/drag-drop.js';
 import { setupControls } from './ui/controls.js';
 import { renderCoordinates } from './ui/board-view.js';
 import { playCaptureAnimation } from './ui/capture-animation.js';
+import { setupBoardResize } from './ui/board-resize.js';
 
 const HUMAN_COLOR = WHITE;
 const AI_COLOR = BLACK;
@@ -82,4 +83,5 @@ function startNewGame(level) {
 }
 
 renderCoordinates();
+setupBoardResize(document.getElementById('resize-handle'));
 startNewGame(aiLevel);

@@ -4,9 +4,19 @@ export function setupControls({ onNewGame }) {
   const turnIndicator = document.getElementById('turn-indicator');
   const scoreIndicator = document.getElementById('score-indicator');
   const messageEl = document.getElementById('message');
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  const boardPanel = document.querySelector('.app-main');
 
   newGameBtn.addEventListener('click', () => {
     onNewGame(Number(difficultySelect.value));
+  });
+
+  fullscreenBtn.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      boardPanel.requestFullscreen();
+    }
   });
 
   return {

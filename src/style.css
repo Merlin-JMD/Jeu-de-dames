@@ -16,6 +16,8 @@
   --piece-white-shadow: #b9ac8e;
   --piece-black: #5a4c42;
   --piece-black-shadow: #120f0c;
+
+  --cell-size: 56px;
 }
 
 * {
@@ -76,10 +78,8 @@ body {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(10, 1fr);
-  width: min(90vw, 560px);
-  aspect-ratio: 1 / 1;
+  grid-template-columns: repeat(10, var(--cell-size, 56px));
+  grid-template-rows: repeat(10, var(--cell-size, 56px));
   border: 10px solid var(--wood-light);
   border-radius: 6px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), inset 0 0 0 2px var(--wood-dark);
@@ -234,6 +234,13 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
+.btn--secondary {
+  background: linear-gradient(180deg, var(--wood-light), var(--wood-dark));
+  color: var(--text-light);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  margin-top: 0.6rem;
+}
+
 #turn-indicator {
   font-size: 1.05rem;
   font-weight: 600;
@@ -277,17 +284,14 @@ body {
 .piece--king::after { content: none; }
 
 /* === Ajustements contraste et visibilite === */
-/* Cases foncees eclaircies pour mieux detacher les pieces brunes */
 .square--dark {
   background: #7d6450;
 }
 
-/* Pieces brunes eclaircies pour reveler les rainures gravees */
 .piece--black {
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
 }
 
-/* Pieces claires: leger renfort de contraste */
 .piece--white {
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
 }
@@ -305,19 +309,19 @@ body {
 
 /* === Coordonnees du damier (lettres a-j, chiffres 1-10) === */
 .board-wrapper {
+  position: relative;
   display: grid;
-  grid-template-columns: 1.4rem 1fr 1.4rem;
-  grid-template-rows: 1.4rem 1fr 1.4rem;
+  grid-template-columns: 1.4rem auto 1.4rem;
+  grid-template-rows: 1.4rem auto 1.4rem;
   grid-template-areas:
     ". top ."
     "left board right"
     ". bottom .";
-  width: min(90vw, 560px);
+  width: fit-content;
 }
 
 .board-wrapper .board {
   grid-area: board;
-  width: 100%;
 }
 
 .coord-row {
@@ -360,4 +364,18 @@ body {
 
 .piece--capturing {
   animation: pulse-capture 0.9s ease-in-out infinite;
+}
+
+/* === Poignee de redimensionnement === */
+.resize-handle {
+  position: absolute;
+  bottom: -8px;
+  left: -8px;
+  width: 20px;
+  height: 20px;
+  cursor: nesw-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--gold) 50%);
+  border-radius: 0 0 0 6px;
+  z-index: 5;
+  touch-action: none;
 }
