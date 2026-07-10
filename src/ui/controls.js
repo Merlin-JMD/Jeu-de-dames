@@ -19,6 +19,12 @@ export function setupControls({ onNewGame }) {
     }
   });
 
+  document.addEventListener('fullscreenchange', () => {
+    fullscreenBtn.textContent = document.fullscreenElement
+      ? 'Retour affichage normal'
+      : 'Plein ecran';
+  });
+
   return {
     getDifficulty: () => Number(difficultySelect.value),
     setTurnText(text) {

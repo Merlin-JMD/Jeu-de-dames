@@ -1,5 +1,5 @@
 const MIN_CELL = 30;
-const MAX_CELL = 90;
+const MAX_CELL = 105;
 
 function currentCellSize() {
   const value = getComputedStyle(document.documentElement).getPropertyValue('--cell-size').trim();
