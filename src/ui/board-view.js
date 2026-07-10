@@ -34,9 +34,6 @@ export function renderBoard(boardEl, state, uiState = {}) {
       if (destinationKeys.has(`${row},${col}`)) {
         square.classList.add('square--destination');
       }
-      if (lastMoveKeys.has(`${row},${col}`)) {
-        square.classList.add('square--last-move');
-      }
       if (capturePathKeys.has(`${row},${col}`)) {
         square.classList.add('square--capture-path');
       }

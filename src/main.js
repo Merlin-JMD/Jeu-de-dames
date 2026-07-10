@@ -64,9 +64,7 @@ function scheduleAiMove() {
   setTimeout(async () => {
     const move = chooseAiMove(state, aiLevel);
     if (move) {
-      if (move.isCapture && move.captures.length > 1) {
-        await playCaptureAnimation(boardEl, state.grid, move);
-      }
+      await playCaptureAnimation(boardEl, state.grid, move);
       state = applyMove(state, move);
       lastMove = move;
     }

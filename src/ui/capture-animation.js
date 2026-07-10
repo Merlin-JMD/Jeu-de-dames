@@ -25,11 +25,22 @@ function buildStepGrid(beforeGrid, move, capturesDone) {
   return grid;
 }
 
-// Plays a multi-capture sequence one jump at a time: highlights the
-// attacking piece, shows the full planned path, stops after each capture
-// and removes the captured piece, then pauses before the next jump.
+// Announces a move by briefly highlighting the piece at its starting
+// square (so the player can see which piece is about to play). If the
+// move is a multi-capture rafle, it then plays it one jump at a time:
+// shows the full planned path, stops after each capture and removes the
+// captured piece, pausing before the next jump.
 export async function playCaptureAnimation(boardEl, beforeGrid, move, options = {}) {
+  const originDelay = options.originDelay || 700;
   const stepDelay = options.stepDelay || 1200;
+
+  renderBoard(boardEl, { grid: beforeGrid }, {
+    interactive: false,
+    capturePath: move.path,
+    animatingSquare: move.from,
+  });
+  await delay(originDelay);
+
   if (!move.isCapture || move.captures.length < 2) return;
 
   for (let step = 1; step <= move.captures.length; step++) {

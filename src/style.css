@@ -359,6 +359,5 @@ body {
 }
 
 .piece--capturing {
-  border-radius: 50%;
   animation: pulse-capture 0.9s ease-in-out infinite;
 }
