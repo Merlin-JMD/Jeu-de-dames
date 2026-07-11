@@ -461,3 +461,31 @@ body {
 #scale-wrapper:-webkit-full-screen #status-panel p {
   margin: 0;
 }
+
+
+/* === Panneau offre de nulle (25 coups sans progres) === */
+.draw-offer-panel {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  text-align: center;
+  margin-top: 0.4rem;
+}
+
+.draw-offer-panel p {
+  margin: 0 0 0.5rem;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.draw-offer-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.draw-offer-buttons .btn {
+  width: auto;
+  margin-top: 0;
+}

@@ -10,7 +10,7 @@ function currentCellSize() {
 // Estimates the largest cell size (in px) that still lets the whole board,
 // its coordinate labels, and the controls row fit inside the current
 // window without overflowing horizontally or vertically.
-function maxCellForViewport() {
+export function maxCellForViewport() {
   const horizontalOverhead = 120; // side padding + coordinate columns + board border
   const verticalOverhead = 260; // header + controls row + padding + board border
   const maxByWidth = (window.innerWidth - horizontalOverhead) / 10;

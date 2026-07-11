@@ -1,4 +1,5 @@
 import { isSoundEnabled, toggleSound } from './sound.js';
+import { maxCellForViewport } from './board-resize.js';
 
 export function setupControls({ onNewGame }) {
   const difficultySelect = document.getElementById('difficulty');
@@ -14,11 +15,17 @@ export function setupControls({ onNewGame }) {
     onNewGame(Number(difficultySelect.value));
   });
 
+  let cellSizeBeforeFullscreen = null;
+
   fullscreenBtn.addEventListener('click', () => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {
-      boardPanel.requestFullscreen();
+      cellSizeBeforeFullscreen = getComputedStyle(document.documentElement).getPropertyValue('--cell-size').trim();
+      boardPanel.requestFullscreen().then(() => {
+        const optimalSize = maxCellForViewport();
+        document.documentElement.style.setProperty('--cell-size', optimalSize + 'px');
+      });
     }
   });
 
@@ -26,6 +33,9 @@ export function setupControls({ onNewGame }) {
     fullscreenBtn.textContent = document.fullscreenElement
       ? 'Retour affichage normal'
       : 'Plein ecran';
+    if (!document.fullscreenElement && cellSizeBeforeFullscreen) {
+      document.documentElement.style.setProperty('--cell-size', cellSizeBeforeFullscreen);
+    }
   });
 
   soundBtn.textContent = isSoundEnabled() ? 'Son : On' : 'Son : Off';

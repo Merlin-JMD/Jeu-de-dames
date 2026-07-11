@@ -40,11 +40,21 @@ function finalizeState(state) {
   if (generateLegalMoves(state).length === 0) {
     return { ...state, winner: otherColor(state.turn) };
   }
-  if (state.movesSinceProgress >= DRAW_HALF_MOVE_LIMIT) {
-    return { ...state, winner: null, drawReason: 'moves-without-progress' };
+  if (state.movesSinceProgress >= DRAW_HALF_MOVE_LIMIT && !state.pendingDraw) {
+    return { ...state, pendingDraw: true };
   }
 
   return state;
+}
+
+// Called when the human accepts the draw offered at the 25-move limit.
+export function confirmDraw(state) {
+  return { ...state, pendingDraw: false, winner: null, drawReason: 'moves-without-progress' };
+}
+
+// Called when the human resigns instead of accepting the draw.
+export function resign(state, resigningColor) {
+  return { ...state, pendingDraw: false, winner: otherColor(resigningColor), drawReason: null };
 }
 
 export function isGameOver(state) {
