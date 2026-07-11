@@ -287,6 +287,14 @@ body {
 
 .piece--king::after { content: none; }
 
+/* Dames agrandies pour mieux se distinguer des pions */
+.piece--king {
+  width: 108%;
+  height: 108%;
+  margin: -4% 0 0 -4%;
+  z-index: 2;
+}
+
 /* === Ajustements contraste et visibilite === */
 .square--dark {
   background: #7d6450;
