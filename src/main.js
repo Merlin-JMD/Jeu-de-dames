@@ -7,6 +7,7 @@ import { setupControls } from './ui/controls.js';
 import { renderCoordinates } from './ui/board-view.js';
 import { playCaptureAnimation } from './ui/capture-animation.js';
 import { playMoveSound } from './ui/sound.js';
+import { maxCellForViewport } from './ui/board-resize.js';
 
 const HUMAN_COLOR = WHITE;
 const AI_COLOR = BLACK;
@@ -137,5 +138,13 @@ function startNewGame(level) {
   refreshUI();
 }
 
+function applyResponsiveCellSize() {
+  if (document.fullscreenElement) return;
+  const optimalSize = maxCellForViewport();
+  document.documentElement.style.setProperty('--cell-size', optimalSize + 'px');
+}
+window.addEventListener('resize', applyResponsiveCellSize);
+
 renderCoordinates();
+applyResponsiveCellSize();
 startNewGame(aiLevel);

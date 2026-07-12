@@ -6,11 +6,15 @@ function squareEq(a, b) {
   return !!a && !!b && a.row === b.row && a.col === b.col;
 }
 
+function squareKey(s) {
+  return `${s.row},${s.col}`;
+}
+
 /**
  * Pointer-events-based drag-and-drop (also supports tap-to-select then
- * tap-to-move). Using the unified Pointer Events API with pointer capture,
- * instead of separate mouse/touch listeners, is what keeps multi-square king
- * drags reliable on touch devices.
+ * tap-to-move). Multi-jump captures are selected progressively: each click
+ * advances the piece to the next legal landing square; once a click reaches
+ * the true end of a maximal capture sequence, the move is applied.
  */
 export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
   let state = null;
@@ -19,6 +23,7 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
   let lastMove = null;
 
   let selected = null;
+  let progress = [];
   let destinations = [];
 
   let pointerId = null;
@@ -29,38 +34,46 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
   let dragging = false;
 
   function render() {
-    const pathSquares = selected ? pathSquaresFrom(selected) : [];
-    renderBoard(boardEl, state, { selected, destinations, pathSquares, lastMove, interactive });
+    renderBoard(boardEl, state, { selected, destinations, lastMove, interactive });
   }
 
-  function destinationsFrom(square) {
-    return legalMoves.filter((m) => squareEq(m.from, square)).map((m) => m.to);
+  function activeMoves() {
+    return legalMoves.filter((m) => {
+      if (!squareEq(m.from, selected)) return false;
+      const path = m.path && m.path.length ? m.path : [m.from, m.to];
+      if (path.length < progress.length) return false;
+      for (let i = 0; i < progress.length; i++) {
+        if (!squareEq(path[i], progress[i])) return false;
+      }
+      return true;
+    });
   }
 
-  function pathSquaresFrom(square) {
+  function nextStepSquares() {
     const squares = [];
     const seen = new Set();
-    const moves = legalMoves.filter((m) => squareEq(m.from, square));
-    for (const m of moves) {
-      const path = m.path && m.path.length ? m.path : [m.to];
-      for (const p of path) {
-        if (squareEq(p, square)) continue;
-        const key = `,`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          squares.push(p);
-        }
+    for (const m of activeMoves()) {
+      const path = m.path && m.path.length ? m.path : [m.from, m.to];
+      if (path.length <= progress.length) continue;
+      const next = path[progress.length];
+      const k = squareKey(next);
+      if (!seen.has(k)) {
+        seen.add(k);
+        squares.push(next);
       }
     }
     return squares;
   }
 
-  function findMove(from, to) {
-    return legalMoves.find((m) => squareEq(m.from, from) && squareEq(m.to, to));
+  function beginSelection(square) {
+    selected = square;
+    progress = [square];
+    destinations = nextStepSquares();
   }
 
   function clearSelection() {
     selected = null;
+    progress = [];
     destinations = [];
   }
 
@@ -110,6 +123,32 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
     }
   }
 
+  function advanceTo(square) {
+    const matching = activeMoves().filter((m) => {
+      const path = m.path && m.path.length ? m.path : [m.from, m.to];
+      return path.length > progress.length && squareEq(path[progress.length], square);
+    });
+    if (matching.length === 0) return false;
+
+    const nextProgress = [...progress, square];
+    const complete = matching.find((m) => {
+      const path = m.path && m.path.length ? m.path : [m.from, m.to];
+      return path.length === nextProgress.length;
+    });
+
+    if (complete) {
+      clearSelection();
+      render();
+      onMove(complete);
+      return true;
+    }
+
+    progress = nextProgress;
+    destinations = nextStepSquares();
+    render();
+    return true;
+  }
+
   function handlePointerDown(e) {
     if (!interactive) return;
     const squareEl = e.target.closest('.square');
@@ -117,17 +156,13 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
     const square = { row: Number(squareEl.dataset.row), col: Number(squareEl.dataset.col) };
 
     if (selected && destinations.some((d) => squareEq(d, square))) {
-      const move = findMove(selected, square);
-      clearSelection();
-      render();
-      if (move) onMove(move);
+      advanceTo(square);
       return;
     }
 
     const hasMovesFromSquare = legalMoves.some((m) => squareEq(m.from, square));
     if (hasMovesFromSquare) {
-      selected = square;
-      destinations = destinationsFrom(square);
+      beginSelection(square);
       originSquare = square;
       startX = e.clientX;
       startY = e.clientY;
@@ -155,7 +190,6 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
 
   function finishPointer(e) {
     const wasDragging = dragging;
-    const origin = originSquare;
     removeGhost();
     if (pointerId !== null) boardEl.releasePointerCapture(pointerId);
     pointerId = null;
@@ -165,10 +199,7 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
     if (wasDragging && e) {
       const dropSquare = squareFromPoint(boardEl, e.clientX, e.clientY);
       if (dropSquare && destinations.some((d) => squareEq(d, dropSquare))) {
-        const move = findMove(origin, dropSquare);
-        clearSelection();
-        render();
-        if (move) onMove(move);
+        advanceTo(dropSquare);
         return;
       }
     }
