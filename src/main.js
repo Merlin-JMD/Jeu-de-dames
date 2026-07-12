@@ -1,4 +1,4 @@
-import { createInitialState, countPieces, WHITE, BLACK } from './engine/board.js';
+import { createInitialState, countPieces, cloneGrid, WHITE, BLACK } from './engine/board.js';
 import { generateLegalMoves } from './engine/moves.js';
 import { applyMove, isGameOver, confirmDraw, resign } from './engine/rules.js';
 import { chooseAiMove } from './engine/ai.js';
@@ -6,7 +6,6 @@ import { createBoardController } from './ui/drag-drop.js';
 import { setupControls } from './ui/controls.js';
 import { renderCoordinates } from './ui/board-view.js';
 import { playCaptureAnimation } from './ui/capture-animation.js';
-import { setupBoardResize } from './ui/board-resize.js';
 import { playMoveSound } from './ui/sound.js';
 
 const HUMAN_COLOR = WHITE;
@@ -21,15 +20,29 @@ const drawResignBtn = document.getElementById('draw-resign-btn');
 drawContinueBtn.addEventListener('click', handleDrawContinue);
 drawResignBtn.addEventListener('click', handleDrawResign);
 
+const replayAiBtn = document.getElementById('replay-btn');
+replayAiBtn.addEventListener('click', handleReplayAiMove);
+
 let state = createInitialState();
 let aiLevel = controls.getDifficulty();
 let lastMove = null;
 let aiThinking = false;
+let lastAiMove = null;
+let lastAiBeforeGrid = null;
+let replaying = false;
+
+const AI_SPEED_FACTOR = { 1: 2.5, 2: 1.6667, 3: 1.25, 4: 1 };
+const BASE_ORIGIN_DELAY = 700;
+const BASE_STEP_DELAY = 1200;
+function getAiAnimationOptions(level) {
+  const factor = AI_SPEED_FACTOR[level] || 1;
+  return { originDelay: Math.round(BASE_ORIGIN_DELAY * factor), stepDelay: Math.round(BASE_STEP_DELAY * factor) };
+}
 
 function refreshUI() {
   const gameOver = isGameOver(state);
   const awaitingDrawDecision = !!state.pendingDraw;
-  const humanTurn = !gameOver && !aiThinking && !awaitingDrawDecision && state.turn === HUMAN_COLOR;
+  const humanTurn = !gameOver && !aiThinking && !replaying && !awaitingDrawDecision && state.turn === HUMAN_COLOR;
   const legalMoves = humanTurn ? generateLegalMoves(state) : [];
   controller.update(state, legalMoves, humanTurn, lastMove);
 
@@ -81,16 +94,31 @@ function handleDrawResign() {
   refreshUI();
 }
 
+async function handleReplayAiMove() {
+  if (!lastAiMove || !lastAiBeforeGrid || replaying || aiThinking) return;
+  replaying = true;
+  replayAiBtn.disabled = true;
+  refreshUI();
+  await playCaptureAnimation(boardEl, lastAiBeforeGrid, lastAiMove, getAiAnimationOptions(aiLevel));
+  replaying = false;
+  replayAiBtn.disabled = false;
+  refreshUI();
+}
+
 function scheduleAiMove() {
   aiThinking = true;
   refreshUI();
   setTimeout(async () => {
     const move = chooseAiMove(state, aiLevel);
     if (move) {
-      await playCaptureAnimation(boardEl, state.grid, move);
+      const beforeGrid = cloneGrid(state.grid);
+      await playCaptureAnimation(boardEl, state.grid, move, getAiAnimationOptions(aiLevel));
       playMoveSound();
       state = applyMove(state, move);
       lastMove = move;
+      lastAiMove = move;
+      lastAiBeforeGrid = beforeGrid;
+      replayAiBtn.disabled = false;
     }
     aiThinking = false;
     refreshUI();
@@ -102,9 +130,12 @@ function startNewGame(level) {
   state = createInitialState();
   lastMove = null;
   aiThinking = false;
+  lastAiMove = null;
+  lastAiBeforeGrid = null;
+  replaying = false;
+  replayAiBtn.disabled = true;
   refreshUI();
 }
 
 renderCoordinates();
-setupBoardResize(document.getElementById('resize-handle'));
 startNewGame(aiLevel);

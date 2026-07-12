@@ -29,11 +29,30 @@ export function createBoardController(boardEl, { onMove, onBlockedPiece }) {
   let dragging = false;
 
   function render() {
-    renderBoard(boardEl, state, { selected, destinations, lastMove, interactive });
+    const pathSquares = selected ? pathSquaresFrom(selected) : [];
+    renderBoard(boardEl, state, { selected, destinations, pathSquares, lastMove, interactive });
   }
 
   function destinationsFrom(square) {
     return legalMoves.filter((m) => squareEq(m.from, square)).map((m) => m.to);
+  }
+
+  function pathSquaresFrom(square) {
+    const squares = [];
+    const seen = new Set();
+    const moves = legalMoves.filter((m) => squareEq(m.from, square));
+    for (const m of moves) {
+      const path = m.path && m.path.length ? m.path : [m.to];
+      for (const p of path) {
+        if (squareEq(p, square)) continue;
+        const key = `,`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          squares.push(p);
+        }
+      }
+    }
+    return squares;
   }
 
   function findMove(from, to) {

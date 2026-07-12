@@ -180,7 +180,8 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  width: calc(var(--cell-size, 56px) * 10 + 20px);
+  width: fit-content;
+  min-width: calc(var(--cell-size, 56px) * 10 + 20px);
   max-width: 100%;
   gap: 0.5rem;
   background: rgba(0, 0, 0, 0.25);
@@ -376,20 +377,6 @@ body {
 
 .piece--capturing {
   animation: pulse-capture 0.9s ease-in-out infinite;
-}
-
-/* === Poignee de redimensionnement === */
-.resize-handle {
-  position: absolute;
-  bottom: -8px;
-  left: -8px;
-  width: 20px;
-  height: 20px;
-  cursor: nesw-resize;
-  background: linear-gradient(135deg, transparent 50%, var(--gold) 50%);
-  border-radius: 0 0 0 6px;
-  z-index: 5;
-  touch-action: none;
 }
 
 

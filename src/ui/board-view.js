@@ -7,11 +7,12 @@ function toEngineRow(visualRow) {
 }
 
 export function renderBoard(boardEl, state, uiState = {}) {
-  const { selected = null, destinations = [], lastMove = null, interactive = true, capturePath = null, animatingSquare = null } = uiState;
+  const { selected = null, destinations = [], pathSquares = [], lastMove = null, interactive = true, capturePath = null, animatingSquare = null } = uiState;
   boardEl.innerHTML = '';
   boardEl.classList.toggle('board--locked', !interactive);
 
   const destinationKeys = new Set(destinations.map((d) => `${d.row},${d.col}`));
+  const pathKeys = new Set(pathSquares.map((d) => `${d.row},${d.col}`));
   const lastMoveKeys = new Set(
     lastMove ? lastMove.path.map((p) => `${p.row},${p.col}`) : []
   );
@@ -31,7 +32,7 @@ export function renderBoard(boardEl, state, uiState = {}) {
       if (selected && selected.row === row && selected.col === col) {
         square.classList.add('square--selected');
       }
-      if (destinationKeys.has(`${row},${col}`)) {
+      if (destinationKeys.has(`${row},${col}`) || pathKeys.has(`${row},${col}`)) {
         square.classList.add('square--destination');
       }
       if (capturePathKeys.has(`${row},${col}`)) {
